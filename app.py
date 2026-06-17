@@ -96,7 +96,7 @@ def get_scaled_reference_features(song_name, scaler):
     # 정규화된 데이터프레임에서 해당 곡의 특징 벡터(11개)를 딕셔너리로 추출
     ref_dict = df_normalized.loc[idx, FEATURES].to_dict()
     
-    found_name = df_raw.loc[idx, track_name']
+    found_name = df_raw.loc[idx, 'track_name']
     found_artist = df_raw.loc[idx, 'track_artist']
     
     return ref_dict, found_name, found_artist
