@@ -29,37 +29,22 @@ FEATURES = [
 
 
 # ==========================================
-# 2. 데이터 로드 및 정규화 (전처리)
+# 2. 데이터 로드 및 정규화 (실제 내 파일 적용 버전)
 # ==========================================
 @st.cache_data
 def load_and_preprocess_data():
     """
-    데이터베이스를 로드하고 MinMaxScaler를 적용하여 정규화합니다.
-    실제 서비스에서는 pd.read_csv("my_music_data.csv")를 사용하세요.
+    내 컴퓨터에 있는 music_database.csv 파일을 읽어와 정규화합니다.
     """
-    # 임시 테스트용 더미 데이터
-    data = {
-        'id': ['1', '2', '3', '4', '5'],
-        'name': ['신나는 댄스곡', '잔잔한 어쿠스틱', '우울한 발라드', '강렬한 락', '행복한 팝'],
-        'artist': ['A', 'B', 'C', 'D', 'E'],
-        'danceability': [0.9, 0.3, 0.2, 0.5, 0.8],
-        'energy': [0.9, 0.2, 0.3, 0.9, 0.7],
-        'key': [5, 2, 1, 8, 6],           # 정규화 전 원본 값 (0~11)
-        'loudness': [-4.0, -15.0, -12.0, -2.0, -6.0], # 정규화 전 원본 값 (dB)
-        'mode': [1.0, 1.0, 0.0, 1.0, 1.0],
-        'speechiness': [0.1, 0.05, 0.03, 0.1, 0.08],
-        'acousticness': [0.05, 0.9, 0.8, 0.01, 0.2],
-        'instrumentalness': [0.0, 0.0, 0.1, 0.8, 0.0],
-        'liveness': [0.2, 0.1, 0.1, 0.4, 0.2],
-        'valence': [0.8, 0.4, 0.1, 0.5, 0.9],
-        'tempo': [130.0, 80.0, 60.0, 140.0, 120.0]  # 정규화 전 원본 값 (BPM)
-    }
-    df_raw = pd.DataFrame(data)
+    # 💡 이 줄을 통해 실제 질문자님의 파일을 읽어옵니다!
+    df_raw = pd.read_csv("spotify_songs2.csv") 
     
     # 데이터 정규화 진행
     scaler = MinMaxScaler()
     df_normalized = df_raw.copy()
     df_normalized[FEATURES] = scaler.fit_transform(df_raw[FEATURES])
+    
+    return df_raw, df_normalized, scaler
     
     # 화면 출력용 원본 df, 계산용 정규화 df, 스케일러 객체 반환
     return df_raw, df_normalized, scaler
