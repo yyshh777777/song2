@@ -36,13 +36,19 @@ def load_and_preprocess_data():
     """
     내 컴퓨터에 있는 music_database.csv 파일을 읽어와 정규화합니다.
     """
-    # 💡 이 줄을 통해 실제 질문자님의 파일을 읽어옵니다!
     df_raw = pd.read_csv("spotify_songs2.csv", encoding="ISO-8859-1")
     
-    # 데이터 정규화 진행
+    # 💡 [여기 추가!] 오디오 특징(FEATURES) 컬럼들 중 빈 칸(NaN)이 있는 행을 완전히 제거합니다.
+    df_raw = df_raw.dropna(subset=FEATURES)
+    
+    # 데이터 정규화 진행 (이제 빈 값이 없으므로 에러가 나지 않습니다!)
     scaler = MinMaxScaler()
     df_normalized = df_raw.copy()
     df_normalized[FEATURES] = scaler.fit_transform(df_raw[FEATURES])
+    
+    # dropna()를 하면 인덱스가 어긋날 수 있으므로 안전하게 인덱스를 리셋해 줍니다.
+    df_raw = df_raw.reset_index(drop=True)
+    df_normalized = df_normalized.reset_index(drop=True)
     
     return df_raw, df_normalized, scaler
     
