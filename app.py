@@ -85,7 +85,7 @@ def get_scaled_reference_features(song_name, scaler):
     """
     # 사용자가 입력한 글자가 노래 제목(name)에 포함되어 있는지 검사 (대소문자 무시)
     # 💡 만약 엑셀의 제목 컬럼명이 'track_name' 등 다른 이름이라면 'name'을 수정해 주세요.
-    matched_songs = df_raw[df_raw['name'].str.contains(song_name, case=False, na=False)]
+    matched_songs = df_raw[df_raw['track_name'].str.contains(song_name, case=False, na=False)]
     
     if matched_songs.empty:
         return None
@@ -96,8 +96,8 @@ def get_scaled_reference_features(song_name, scaler):
     # 정규화된 데이터프레임에서 해당 곡의 특징 벡터(11개)를 딕셔너리로 추출
     ref_dict = df_normalized.loc[idx, FEATURES].to_dict()
     
-    found_name = df_raw.loc[idx, 'name']
-    found_artist = df_raw.loc[idx, 'artist']
+    found_name = df_raw.loc[idx, track_name']
+    found_artist = df_raw.loc[idx, 'track_artist']
     
     return ref_dict, found_name, found_artist
 
@@ -165,7 +165,7 @@ if st.button("추천 시작", type="primary", use_container_width=True):
             st.subheader("✨ 당신을 위한 맞춤 추천 결과")
             
             # 출력할 칼럼 정리 (인덱스 숨기고 깔끔하게)
-            display_df = top_recommendations[['name', 'artist', 'similarity']].copy()
+            display_df = top_recommendations[['track_name', 'track_artist', 'similarity']].copy()
             display_df.columns = ['곡 제목', '아티스트', '추천 일치율']
             
             st.dataframe(
