@@ -37,7 +37,7 @@ def load_and_preprocess_data():
     내 컴퓨터에 있는 music_database.csv 파일을 읽어와 정규화합니다.
     """
     # 💡 이 줄을 통해 실제 질문자님의 파일을 읽어옵니다!
-    df_raw = pd.read_csv("spotify_songs2.csv") 
+    df_raw = pd.read_csv("spotify_songs2.csv", encoding="cp949")
     
     # 데이터 정규화 진행
     scaler = MinMaxScaler()
