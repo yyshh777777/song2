@@ -76,26 +76,30 @@ def get_features_from_prompt(user_prompt):
 # ==========================================
 # 4. 핵심 함수: 참고 노래 -> 벡터 변환 및 정규화
 # ==========================================
+# ==========================================
+# 4. 수정된 함수: 내 CSV 데이터베이스에서 참고 노래 찾기 (API 차단 완벽 우회)
+# ==========================================
 def get_scaled_reference_features(song_name, scaler):
-    # 1. Spotify API에서 곡 검색
-    results = sp.search(q=song_name, limit=1, type='track')
-    if not results['tracks']['items']:
+    """
+    Spotify API 대신 내부 CSV 데이터에서 입력된 노래를 찾아 특징 벡터를 반환합니다.
+    """
+    # 사용자가 입력한 글자가 노래 제목(name)에 포함되어 있는지 검사 (대소문자 무시)
+    # 💡 만약 엑셀의 제목 컬럼명이 'track_name' 등 다른 이름이라면 'name'을 수정해 주세요.
+    matched_songs = df_raw[df_raw['name'].str.contains(song_name, case=False, na=False)]
+    
+    if matched_songs.empty:
         return None
     
-    track_id = results['tracks']['items'][0]['id']
-    track_info = results['tracks']['items'][0]
+    # 가장 첫 번째로 매칭된 곡의 인덱스를 가져옴
+    idx = matched_songs.index[0]
     
-    # 2. 오디오 특징 가져오기
-    features_raw = sp.audio_features(track_id)[0]
+    # 정규화된 데이터프레임에서 해당 곡의 특징 벡터(11개)를 딕셔너리로 추출
+    ref_dict = df_normalized.loc[idx, FEATURES].to_dict()
     
-    # 3. 필요한 11개 특징만 딕셔너리로 추출
-    ref_dict = {f: features_raw[f] for f in FEATURES}
+    found_name = df_raw.loc[idx, 'name']
+    found_artist = df_raw.loc[idx, 'artist']
     
-    # 4. 데이터베이스와 동일한 스케일로 정규화(Transform)
-    df_ref = pd.DataFrame([ref_dict])
-    df_ref[FEATURES] = scaler.transform(df_ref[FEATURES])
-    
-    return df_ref.iloc[0].to_dict(), track_info['name'], track_info['artists'][0]['name']
+    return ref_dict, found_name, found_artist
 
 
 # ==========================================
